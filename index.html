@@ -2,13 +2,88 @@
 <html>
    <head>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title></title>
+      <title>Branch Tracking and Event Logging Example</title>
       <script>
-         // load Branch
+         // Load Branch
          (function(b,r,a,n,c,h,_,s,d,k){if(!b[n]||!b[n]._q){for(;s<_.length;)c(h,_[s++]);d=r.createElement(a);d.async=1;d.src="https://cdn.branch.io/branch-latest.min.js";k=r.getElementsByTagName(a)[0];k.parentNode.insertBefore(d,k);b[n]=h}})(window,document,"script","branch",function(b,r){b[r]=function(){b._q.push([r,arguments])}},{_q:[],_v:1},"addListener banner closeBanner closeJourney data deepview deepviewCta first init link logout removeListener setBranchViewData setIdentity track trackCommerceEvent logEvent disableTracking getBrowserFingerprintId crossPlatformIds lastAttributedTouchData setAPIResponseCallback qrCode".split(" "), 0);
-         // init Branch
-         branch.init('key_live_jAozxBAhXn9NYeOS8Vj8BefnDxdempwR'); // Change `key_live_YOUR_KEY_GOES_HERE` to match your Branch Dashboard
+
+         // Default tracking state
+         let trackingDisabled = true;
+
+         // Function to toggle tracking
+         function toggleTracking() {
+            trackingDisabled = !trackingDisabled;
+            branch.disableTracking(trackingDisabled, function(err) {
+               if (err) {
+                  console.log(err);
+                  return;
+               }
+               console.log('Tracking is now ' + (trackingDisabled ? 'disabled' : 'enabled'));
+            });
+         }
+
+         // Function to log an event
+         function logEvent() {
+            // Define event data
+            var event_and_custom_data = {
+               "transaction_id": "tras_Id_1232343434",
+               "currency": "USD",
+               "revenue": 180.2,
+            };
+
+            // Define content data
+            var content_items = [
+               {
+                  "$content_schema": "COMMERCE_PRODUCT",
+                  "$og_title": "Nike Shoe"
+                  "$custom_fields": {"foo1":"bar1","foo2":"bar2"}
+               }
+            ];
+
+            // Set alias
+            var customer_event_alias = "my custom alias";
+
+            // Log the event
+            branch.logEvent(
+               "PURCHASE",
+               event_and_custom_data,
+               content_items,
+               customer_event_alias,
+               function(err) {
+                  if (err) {
+                     console.log('Error logging event:', err);
+                  } else {
+                     console.log('Event logged successfully');
+                  }
+               }
+            );
+         }
+
+         // Initialize Branch after disabling tracking
+         function initBranch() {
+            branch.init('key_live_jAozxBAhXn9NYeOS8Vj8BefnDxdempwR', function(err) {
+               if (err) {
+                  console.log(err);
+               } else {
+                  console.log('Branch initialized');
+               }
+            });
+         }
+
+         // Disable tracking and then initialize Branch
+         branch.disableTracking(trackingDisabled, function(err) {
+            if (err) {
+               console.log(err);
+               return;
+            }
+            console.log('Tracking disabled initially');
+            initBranch();
+         });
       </script>
    </head>
-   <body></body>
+   <body>
+      <button onclick="toggleTracking()">Toggle Tracking</button>
+      <button onclick="logEvent()">Log Event</button>
+   </body>
 </html>
+
