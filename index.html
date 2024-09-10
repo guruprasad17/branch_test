@@ -13,7 +13,7 @@
          // Function to toggle tracking
          function toggleTracking() {
             trackingDisabled = !trackingDisabled;
-            branch.disableTracking(trackingDisabled, function(err) {
+            branch.init('key_live_jAozxBAhXn9NYeOS8Vj8BefnDxdempwR', { 'tracking_disabled': trackingDisabled }, function(err) {
                if (err) {
                   console.log(err);
                   return;
@@ -27,8 +27,8 @@
             // Define event data
             var event_and_custom_data = {
                "transaction_id": "tras_Id_1232343434",
-               "currency": "USD",
                "revenue": 180.2,
+               "shipping": 10.5             
             };
 
             // Define content data
@@ -36,8 +36,8 @@
                {
                   "$content_schema": "COMMERCE_PRODUCT",
                   "$og_title": "Nike Shoe"
-                  "$custom_fields": {"foo1":"bar1","foo2":"bar2"}
-               }
+               },
+               
             ];
 
             // Set alias
@@ -59,26 +59,19 @@
             );
          }
 
-         // Initialize Branch after disabling tracking
+         // Initialize Branch with tracking disabled
          function initBranch() {
-            branch.init('key_live_jAozxBAhXn9NYeOS8Vj8BefnDxdempwR', function(err) {
+            branch.init('key_live_jAozxBAhXn9NYeOS8Vj8BefnDxdempwR', { 'tracking_disabled': trackingDisabled }, function(err) {
                if (err) {
                   console.log(err);
                } else {
-                  console.log('Branch initialized');
+                  console.log('Branch initialized with tracking ' + (trackingDisabled ? 'disabled' : 'enabled'));
                }
             });
          }
 
-         // Disable tracking and then initialize Branch
-         branch.disableTracking(trackingDisabled, function(err) {
-            if (err) {
-               console.log(err);
-               return;
-            }
-            console.log('Tracking disabled initially');
-            initBranch();
-         });
+         // Initialize Branch by default with tracking disabled
+         initBranch();
       </script>
    </head>
    <body>
